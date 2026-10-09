@@ -7,9 +7,9 @@ struct CanvasSizeSheet: View {
     let finish: (CanvasSizeOptions?) -> Void
     @State private var draft: CanvasSizeDraft
     @State private var anchor = 4
-    @State private var extensionChoice = "Transparent"
+    @State private var extensionChoice = L("Transparent")
     @State private var customColor = PaletteColor.white
-    private let anchorNames = ["Top left", "Top center", "Top right", "Middle left", "Center", "Middle right", "Bottom left", "Bottom center", "Bottom right"]
+    private let anchorNames = [L("Top left"), L("Top center"), L("Top right"), L("Middle left"), L("Center"), L("Middle right"), L("Bottom left"), L("Bottom center"), L("Bottom right")]
 
     init(document: CanvasDocument, session: EditorSession, finish: @escaping (CanvasSizeOptions?) -> Void) {
         self.foreground = session.foregroundColor
@@ -52,11 +52,11 @@ struct CanvasSizeSheet: View {
     private var fill: CanvasExtensionColor? {
         let color: NSColor
         switch extensionChoice {
-        case "Transparent": return nil
-        case "Black": color = .black
-        case "Foreground": color = foreground.nsColor
-        case "White": color = .white
-        case "Background": color = background.nsColor
+        case L("Transparent"): return nil
+        case L("Black"): color = .black
+        case L("Foreground"): color = foreground.nsColor
+        case L("White"): color = .white
+        case L("Background"): color = background.nsColor
         default: color = customColor.nsColor
         }
         guard let rgb = color.usingColorSpace(.sRGB) else { return nil }
@@ -66,39 +66,39 @@ struct CanvasSizeSheet: View {
     var body: some View { sheet.roundedControls() }
     @ViewBuilder private var sheet: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Canvas Size").font(.title2.bold())
-            Text("Current: \(draft.originalWidth) × \(draft.originalHeight) pixels")
-            Text("\(bytes(draft.originalWidth, draft.originalHeight)) uncompressed RGBA canvas")
+            Text(L("Canvas Size")).font(.title2.bold())
+            Text("当前：\(draft.originalWidth) × \(draft.originalHeight) 像素")
+            Text("\(bytes(draft.originalWidth, draft.originalHeight)) 未压缩 RGBA 画布")
                 .font(.callout).foregroundStyle(.secondary)
             Divider()
-            Picker("Units", selection: $draft.unit) {
-                ForEach(CanvasUnit.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+            Picker(L("Units"), selection: $draft.unit) {
+                ForEach(CanvasUnit.allCases, id: \.self) { Text($0.rawValue.localized).tag($0) }
             }
             HStack {
-                Text("Width").frame(width: 60, alignment: .leading)
+                Text(L("Width")).frame(width: 60, alignment: .leading)
                     .scrubbable(sensitivity: scrubSensitivity(true), value: dimension(true), range: scrubRange(true), step: 1)
-                TextField("Width", value: dimension(true), format: .number.precision(.fractionLength(0...3)))
+                TextField(L("Width"), value: dimension(true), format: .number.precision(.fractionLength(0...3)))
             }
             HStack {
-                Text("Height").frame(width: 60, alignment: .leading)
+                Text(L("Height")).frame(width: 60, alignment: .leading)
                     .scrubbable(sensitivity: scrubSensitivity(false), value: dimension(false), range: scrubRange(false), step: 1)
-                TextField("Height", value: dimension(false), format: .number.precision(.fractionLength(0...3)))
+                TextField(L("Height"), value: dimension(false), format: .number.precision(.fractionLength(0...3)))
             }
-            Toggle("Relative to current dimensions", isOn: $draft.relative)
-            Toggle("Lock original aspect ratio", isOn: $draft.locked)
+            Toggle(L("Relative to current dimensions"), isOn: $draft.relative)
+            Toggle(L("Lock original aspect ratio"), isOn: $draft.locked)
                 .onChange(of: draft.locked) { _, locked in
                     if locked { draft.set(draft.displayed(widthAxis: true), widthAxis: true) }
                 }
             if draft.valid {
-                Text("New: \(Int(draft.width.rounded())) × \(Int(draft.height.rounded())) pixels · \(bytes(Int(draft.width.rounded()), Int(draft.height.rounded()))) uncompressed")
+                Text("新尺寸：\(Int(draft.width.rounded())) × \(Int(draft.height.rounded())) 像素 · \(bytes(Int(draft.width.rounded()), Int(draft.height.rounded())))（未压缩）")
                     .font(.callout).foregroundStyle(.secondary)
             } else {
-                Text("Final dimensions must be 1–\(DocumentLimits.maxSide.formatted()) pixels per side.")
+                Text("最终尺寸的每边必须为 1–\(DocumentLimits.maxSide.formatted()) 像素。")
                     .font(.callout).foregroundStyle(.orange)
             }
             HStack(alignment: .top, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Anchor")
+                    Text(L("Anchor"))
                     Grid(horizontalSpacing: 3, verticalSpacing: 3) {
                         ForEach(0..<3) { row in
                             GridRow {
@@ -110,7 +110,7 @@ struct CanvasSizeSheet: View {
                                     }
                                     .tint(index == anchor ? .accentColor : .secondary)
                                     .help(anchorNames[index]).accessibilityLabel(anchorNames[index])
-                                    .accessibilityValue(index == anchor ? "Selected" : "")
+                                    .accessibilityValue(index == anchor ? L("Selected") : "")
                                 }
                             }
                         }
@@ -118,24 +118,24 @@ struct CanvasSizeSheet: View {
                 }
                 VStack(alignment: .leading, spacing: 8) {
                     Text(anchorNames[anchor]).font(.callout.bold())
-                    Text("Keeps this point fixed. Artwork is not scaled; cropped content remains outside the canvas.")
+                    Text(L("Keeps this point fixed. Artwork is not scaled; cropped content remains outside the canvas."))
                         .font(.callout).foregroundStyle(.secondary)
                 }.padding(.top, 28)
             }
-            Picker("Canvas extension", selection: $extensionChoice) {
-                ForEach(["Transparent", "Foreground", "Background", "Black", "White", "Custom"], id: \.self) { Text($0) }
+            Picker(L("Canvas extension"), selection: $extensionChoice) {
+                ForEach([L("Transparent"), L("Foreground"), L("Background"), L("Black"), L("White"), L("Custom")], id: \.self) { Text($0) }
             }
-            if extensionChoice == "Custom" {
+            if extensionChoice == L("Custom") {
                 HStack(spacing: 8) {
-                    Text("Extension color")
-                    DialogColorSwatch(title: "Extension Color", color: $customColor, session: session)
-                        .help("Color for the added canvas")
+                    Text(L("Extension color"))
+                    DialogColorSwatch(title: L("Extension Color"), color: $customColor, session: session)
+                        .help(L("Color for the added canvas"))
                 }
             }
             HStack {
-                Button("Cancel") { DialogColorSwatch.closePicker(session); finish(nil) }.configuredNativeShortcut(.escape)
+                Button(L("Cancel")) { DialogColorSwatch.closePicker(session); finish(nil) }.configuredNativeShortcut(.escape)
                 Spacer()
-                Button("OK") {
+                Button(L("OK")) {
                     guard draft.valid else { return }
                     DialogColorSwatch.closePicker(session)
                     finish(CanvasSizeOptions(width: Int(draft.width.rounded()), height: Int(draft.height.rounded()), anchor: anchor, fill: fill))

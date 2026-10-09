@@ -19,7 +19,7 @@ struct RawDevelopSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Develop “\(url.lastPathComponent)”").font(.title2.bold())
+            Text("显影“\(url.lastPathComponent)”").font(.title2.bold())
             ZStack {
                 RoundedRectangle(cornerRadius: 6).fill(Color.black.opacity(0.35))
                 if let preview {
@@ -31,7 +31,7 @@ struct RawDevelopSheet: View {
                     // Import pressed: the full frame takes a second or more to develop.
                     VStack(spacing: 8) {
                         ProgressView().controlSize(.regular)
-                        Text("Importing…").foregroundStyle(.secondary)
+                        Text(L("Importing…")).foregroundStyle(.secondary)
                     }
                     .padding(16).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
                 } else if working { ProgressView().controlSize(.small) }
@@ -39,16 +39,16 @@ struct RawDevelopSheet: View {
             .frame(width: 560, height: 340)
 
             Group {
-                slider("Exposure", value: $settings.exposure, range: -3...3, unit: " EV", precision: 2)
-                slider("Temperature", value: $settings.temperature, range: 2000...12000, unit: " K", precision: 0)
-                slider("Tint", value: $settings.tint, range: -150...150, unit: "", precision: 0)
-                slider("Boost", value: $settings.boost, range: 0...1, unit: "", precision: 2)
+                slider(L("Exposure"), value: $settings.exposure, range: -3...3, unit: " EV", precision: 2)
+                slider(L("Temperature"), value: $settings.temperature, range: 2000...12000, unit: " K", precision: 0)
+                slider(L("Tint"), value: $settings.tint, range: -150...150, unit: "", precision: 0)
+                slider(L("Boost"), value: $settings.boost, range: 0...1, unit: "", precision: 2)
 
                 HStack {
-                    Button("Reset") { settings.reset() }.disabled(settings.isAsShot)
+                    Button(L("Reset")) { settings.reset() }.disabled(settings.isAsShot)
                     Spacer()
-                    Button("Cancel") { session.finishRawDevelop(nil) }.keyboardShortcut(.cancelAction)
-                    Button("Import") { session.finishRawDevelop(settings) }.keyboardShortcut(.defaultAction)
+                    Button(L("Cancel")) { session.finishRawDevelop(nil) }.keyboardShortcut(.cancelAction)
+                    Button(L("Import")) { session.finishRawDevelop(settings) }.keyboardShortcut(.defaultAction)
                 }
             }
             .disabled(session.rawImporting)

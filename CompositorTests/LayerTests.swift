@@ -17,7 +17,7 @@ struct LayerTests {
         session.activeLayerID = first.id
         session.addBlankLayer()
         let layers = try #require(session.document?.layers)
-        #expect(layers.map(\.name) == ["Layer 1", "Layer 4", "Layer 2", "Layer 3"])
+        #expect(layers.map(\.name) == ["图层 1", "图层 4", "图层 2", "图层 3"])
         #expect(layers[1].id == session.activeLayerID)
         #expect(layers[1].asset == nil)
         #expect(layers[1].size == CGSize(width: 800, height: 600))
@@ -57,11 +57,11 @@ struct LayerTests {
         let session = sessionWithThreeLayers()
         let active = session.activeLayerID
         session.reorderLayers(from: IndexSet(integer: 0), to: 3)
-        #expect(session.document?.layers.map(\.name) == ["Layer 3", "Layer 1", "Layer 2"])
+        #expect(session.document?.layers.map(\.name) == ["图层 3", "图层 1", "图层 2"])
         #expect(session.activeLayerID == active)
         #expect(!session.canMoveActiveLayer(by: -1))
         session.moveActiveLayer(by: 1)
-        #expect(session.document?.layers.map(\.name) == ["Layer 1", "Layer 3", "Layer 2"])
+        #expect(session.document?.layers.map(\.name) == ["图层 1", "图层 3", "图层 2"])
         session.reorderLayers(from: IndexSet(integer: 99), to: 0)
         #expect(session.document?.layers.count == 3)
     }
@@ -183,7 +183,7 @@ struct LayerTests {
         let session = EditorSession()
         session.createNewProject(width: 640, height: 480)
         #expect(session.document?.layers.count == 1)
-        #expect(session.activeLayer?.name == "Layer 1" && session.activeLayer?.asset == nil)
+        #expect(session.activeLayer?.name == "图层 1" && session.activeLayer?.asset == nil)
         #expect(session.activeLayer?.size == CGSize(width: 640, height: 480))
         #expect(session.canPaint)
     }
@@ -209,14 +209,14 @@ struct LayerTests {
 
         session.deleteLayerOrMask()
         #expect(session.document?.layers.map(\.id) == [keep], "the folder, its child and the other selected layer are gone")
-        #expect(session.history.undoCount == count + 1 && session.history.undoName == "Delete Layers")
+        #expect(session.history.undoCount == count + 1 && session.history.undoName == L("Delete Layers"))
         #expect(session.activeLayerID == keep && session.selectedLayerIDs == [keep])
         session.undo()
         #expect(session.document == before)
 
         session.selectLayers([keep], primary: keep)
         session.deleteLayerOrMask() // a single selection still deletes just that layer
-        #expect(session.document?.layers.contains { $0.id == keep } == false && session.history.undoName == "Delete Layer")
+        #expect(session.document?.layers.contains { $0.id == keep } == false && session.history.undoName == L("Delete Layer"))
     }
 
     /// Option-dragging a layer in the Layers panel drops a duplicate where it lands, as one undo step.
@@ -230,7 +230,7 @@ struct LayerTests {
         let after = session.layerRows.map(\.layer)
         #expect(after.count == 4)
         #expect(session.history.undoCount == count + 1)
-        #expect(session.history.undoName == "Duplicate Layer")
+        #expect(session.history.undoName == L("Duplicate Layer"))
         #expect(after.first?.name == "\(bottom.name) copy", "the copy lands above the top layer: \(after.map(\.name))")
         #expect(after.contains { $0.id == bottom.id }, "the original stays where it was")
         session.undo()
@@ -274,20 +274,20 @@ struct LayerTests {
         let titles = menu.items.map(\.title)
 
         // Duplicate
-        #expect(titles.contains("Duplicate Layer"))
+        #expect(titles.contains(L("Duplicate Layer")))
         // Rename
-        #expect(titles.contains("Rename…"))
+        #expect(titles.contains(L("Rename…")))
         // Delete
-        #expect(titles.contains("Delete Layer"))
+        #expect(titles.contains(L("Delete Layer")))
         // Mask actions
-        let addMaskItem = try #require(menu.items.first(where: { $0.title == "Add Mask" }))
+        let addMaskItem = try #require(menu.items.first(where: { $0.title == L("Add Mask") }))
         let submenu = try #require(addMaskItem.submenu)
         let subTitles = submenu.items.map(\.title)
         #expect(subTitles.contains("Reveal All (White)"))
         #expect(subTitles.contains("Hide All (Black)"))
-        #expect(titles.contains("Disable Mask"))
-        #expect(titles.contains("Delete Mask"))
-        #expect(titles.contains("Link Mask") || titles.contains("Unlink Mask"))
+        #expect(titles.contains(L("Disable Mask")))
+        #expect(titles.contains(L("Delete Mask")))
+        #expect(titles.contains(L("Link Mask")) || titles.contains(L("Unlink Mask")))
     }
 
     @Test func testRightClickOnUnselectedLayerSelectsIt() throws {
@@ -401,7 +401,7 @@ struct LayerTests {
         #expect(copy.name == "\(target.name) copy")
         #expect(session.activeLayerID == copy.id, "active layer is the duplicate")
         #expect(session.history.undoCount == undoCount + 1)
-        #expect(session.history.undoName == "Duplicate Layer")
+        #expect(session.history.undoName == L("Duplicate Layer"))
     }
 
     @Test func testContextMenuDuplicateFolderPreservesHierarchy() throws {
@@ -432,9 +432,9 @@ struct LayerTests {
 
         // Without mask:
         var menu = try #require(coordinator.contextMenu(for: 0))
-        let addMaskItem = try #require(menu.items.first { $0.title == "Add Mask" })
+        let addMaskItem = try #require(menu.items.first { $0.title == L("Add Mask") })
         #expect(addMaskItem.isEnabled == true)
-        let deleteMaskItem = try #require(menu.items.first { $0.title == "Delete Mask" })
+        let deleteMaskItem = try #require(menu.items.first { $0.title == L("Delete Mask") })
         #expect(deleteMaskItem.isEnabled == false)
         let toggleMaskItem = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.toggleMaskAction) })
         #expect(toggleMaskItem.isEnabled == false)
@@ -447,12 +447,12 @@ struct LayerTests {
         // With mask (enabled):
         coordinator.update(table)
         menu = try #require(coordinator.contextMenu(for: 0))
-        let addMaskAfter = try #require(menu.items.first { $0.title == "Add Mask" })
+        let addMaskAfter = try #require(menu.items.first { $0.title == L("Add Mask") })
         #expect(addMaskAfter.isEnabled == false)
         let toggleMaskAfter = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.toggleMaskAction) })
         #expect(toggleMaskAfter.isEnabled == true)
-        #expect(toggleMaskAfter.title == "Disable Mask")
-        let deleteMaskAfter = try #require(menu.items.first { $0.title == "Delete Mask" })
+        #expect(toggleMaskAfter.title == L("Disable Mask"))
+        let deleteMaskAfter = try #require(menu.items.first { $0.title == L("Delete Mask") })
         #expect(deleteMaskAfter.isEnabled == true)
 
         // Disable mask
@@ -461,7 +461,7 @@ struct LayerTests {
         coordinator.update(table)
         menu = try #require(coordinator.contextMenu(for: 0))
         let toggleMaskDisabled = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.toggleMaskAction) })
-        #expect(toggleMaskDisabled.title == "Enable Mask")
+        #expect(toggleMaskDisabled.title == L("Enable Mask"))
 
         // Delete mask
         coordinator.deleteMaskAction(nil)
@@ -479,7 +479,7 @@ struct LayerTests {
 
         var menu = try #require(coordinator.contextMenu(for: 0))
         var clippingItem = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.toggleClippingMaskAction) })
-        #expect(clippingItem.title == "Create Clipping Mask")
+        #expect(clippingItem.title == L("Create Clipping Mask"))
         #expect(clippingItem.isEnabled == true)
 
         // Create clipping mask
@@ -490,7 +490,7 @@ struct LayerTests {
         coordinator.update(table)
         menu = try #require(coordinator.contextMenu(for: 0))
         clippingItem = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.toggleClippingMaskAction) })
-        #expect(clippingItem.title == "Release Clipping Mask")
+        #expect(clippingItem.title == L("Release Clipping Mask"))
         #expect(clippingItem.isEnabled == true)
 
         // Release clipping mask
@@ -509,7 +509,7 @@ struct LayerTests {
         var menu = try #require(coordinator.contextMenu(for: 0))
         var mergeItem = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.mergeLayersAction) })
         #expect(mergeItem.title == session.mergeTitle)
-        #expect(mergeItem.title == "Merge Down")
+        #expect(mergeItem.title == L("Merge Down"))
         #expect(mergeItem.isEnabled == session.canMergeLayers)
 
         // Multi-selection: "Merge Layers"
@@ -518,7 +518,7 @@ struct LayerTests {
         menu = try #require(coordinator.contextMenu(for: 0))
         mergeItem = try #require(menu.items.first { $0.action == #selector(NativeLayerList.Coordinator.mergeLayersAction) })
         #expect(mergeItem.title == session.mergeTitle)
-        #expect(mergeItem.title == "Merge Layers")
+        #expect(mergeItem.title == L("Merge Layers"))
         #expect(mergeItem.isEnabled == session.canMergeLayers)
 
         // Execute merge

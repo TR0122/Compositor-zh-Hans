@@ -217,7 +217,7 @@ extension EditorSession {
     }
     var cropRatio: CGFloat? {
         switch cropRatioChoice {
-        case "Original": return document.map { CGFloat($0.width) / CGFloat($0.height) }
+        case L("Original"): return document.map { CGFloat($0.width) / CGFloat($0.height) }
         case "1:1": return 1
         case "4:3": return 4 / 3
         case "3:4": return 3 / 4
@@ -243,7 +243,7 @@ extension EditorSession {
                 to: CanvasSizeOptions(width: Int(rect.width), height: Int(rect.height),
                     contentOffset: CGPoint(x: -rect.minX, y: -rect.minY)))
             cropRect = nil
-            applyDocumentSize(result, actionName: "Crop")
+            applyDocumentSize(result, actionName: L("Crop"))
         } catch { cropError = error.localizedDescription }
     }
 }

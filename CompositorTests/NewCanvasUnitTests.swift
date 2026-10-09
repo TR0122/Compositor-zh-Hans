@@ -42,7 +42,7 @@ import Testing
             let session = EditorSession()
             session.createNewProject(width: 40, height: 30, background: background.color)
             let layer = try #require(session.document?.layers.first)
-            #expect(layer.name == "Background")
+            #expect(layer.name == L("Background"))
             let image = try #require(layer.asset?.image)
             #expect(image.width == 40 && image.height == 30)
             let pixels = try BrushRaster.copy(image)

@@ -34,16 +34,16 @@ struct JPEGExportSheet: View {
     @ViewBuilder private var sheet: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 8) {
-                Text("Export JPEG").font(.title2.bold())
+                Text(L("Export JPEG")).font(.title2.bold())
                 Spacer()
-                Button("Fit") { zoom = nil }.disabled(zoom == nil)
-                    .help("Show the whole image (⌘0)")
+                Button(L("Fit")) { zoom = nil }.disabled(zoom == nil)
+                    .help(L("Show the whole image (⌘0)"))
                 Button { zoomBy(1) } label: { Image(systemName: "plus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: 1) == nil)
-                    .help("Zoom in (⌘+), now \(percent). At 100% each pixel of the JPEG is one pixel of the screen, as on the canvas")
+                    .help("放大（⌘+），当前 \(percent)。100% 时 JPEG 的每个像素对应屏幕上的一个像素，与画布一致")
                 Button { zoomBy(-1) } label: { Image(systemName: "minus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: -1) == nil)
-                    .help("Zoom out (⌘−), now \(percent)")
+                    .help("缩小（⌘−），当前 \(percent)")
             }
             // Closer to the title row than the rest of the dialog's spacing.
             .padding(.bottom, -8)
@@ -56,17 +56,17 @@ struct JPEGExportSheet: View {
                     ProgressView().padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
                 }
             }.frame(width: JPEGPreview.frame.width, height: JPEGPreview.frame.height).clipped()
-                .help("Drag or scroll to move around; double-click switches between Fit and 100%")
+                .help(L("Drag or scroll to move around; double-click switches between Fit and 100%"))
             HStack {
-                Text("Quality")
+                Text(L("Quality"))
                 Slider(value: $options.quality, in: 0...1, step: 0.01)
                 Text("\(Int((options.quality * 100).rounded()))%")
                     .monospacedDigit().frame(width: 45, alignment: .trailing)
             }
             HStack(spacing: 8) {
-                Text("Background for transparency")
-                DialogColorSwatch(title: "JPEG Background", color: matte, session: session)
-                    .help("Color that fills transparent areas")
+                Text(L("Background for transparency"))
+                DialogColorSwatch(title: L("JPEG Background"), color: matte, session: session)
+                    .help(L("Color that fills transparent areas"))
             }
             HStack(spacing: 12) {
                 Text("\(raster.image.width.formatted()) × \(raster.image.height.formatted()) px · sRGB")
@@ -75,9 +75,9 @@ struct JPEGExportSheet: View {
                 if let error { Text(error).foregroundStyle(.red) }
                 else if readyOptions == options, let result {
                     Text(ByteCountFormatter.string(fromByteCount: Int64(result.data.count), countStyle: .file)).monospacedDigit()
-                } else { Text("Updating…").foregroundStyle(.secondary) }
-                Button("Cancel") { DialogColorSwatch.closePicker(session); finish(nil) }.configuredNativeShortcut(.escape)
-                Button("Export…") {
+                } else { Text(L("Updating…")).foregroundStyle(.secondary) }
+                Button(L("Cancel")) { DialogColorSwatch.closePicker(session); finish(nil) }.configuredNativeShortcut(.escape)
+                Button(L("Export…")) {
                     DialogColorSwatch.closePicker(session)
                     UserDefaults.standard.set(options.quality, forKey: Self.qualityKey)
                     finish(result?.data)

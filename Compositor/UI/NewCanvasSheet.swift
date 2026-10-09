@@ -9,10 +9,10 @@ nonisolated enum NewCanvasUnit: String, CaseIterable, Sendable {
     /// The unit written out, for the summary line's pill.
     var name: String {
         switch self {
-        case .pixels: "Pixels"
-        case .inches: "Inches"
-        case .centimeters: "Centimeters"
-        case .millimeters: "Millimeters"
+        case .pixels: L("Pixels")
+        case .inches: L("Inches")
+        case .centimeters: L("Centimeters")
+        case .millimeters: L("Millimeters")
         }
     }
     /// The next unit, for the pill: px → in → cm → mm → px.
@@ -44,7 +44,7 @@ nonisolated enum NewCanvasUnit: String, CaseIterable, Sendable {
 /// What a new canvas starts as: see-through, or a Background layer of white or black.
 nonisolated enum NewCanvasBackground: String, CaseIterable, Sendable {
     case transparent, white, black
-    var title: String { "\(rawValue.capitalized) canvas" }
+    var title: String { "\(rawValue.capitalized.localized)画布" }
     var next: NewCanvasBackground { Self.allCases[(Self.allCases.firstIndex(of: self)! + 1) % Self.allCases.count] }
     var color: CGColor? {
         switch self {
@@ -73,8 +73,8 @@ struct NewCanvasSheet: View {
     private var pixelHeight: Int? { unit.pixels(height, resolution: resolution) }
     private var valid: Bool { pixelWidth != nil && pixelHeight != nil }
     private var resolutionHelp: String {
-        let size = unit != .pixels ? pixelWidth.flatMap { w in pixelHeight.map { h in " · \(Int(resolution)) DPI: \(w) × \(h) pixels" } } : nil
-        return "Resolution: 72 for screens, 300 for print. Click to switch." + (size ?? "")
+        let size = unit != .pixels ? pixelWidth.flatMap { w in pixelHeight.map { h in " · \(Int(resolution)) DPI：\(w) × \(h) 像素" } } : nil
+        return L("Resolution: 72 for screens, 300 for print. Click to switch.") + (size ?? "")
     }
     /// Shows the sizes in another unit, the same canvas written differently.
     private func switchUnit(to new: NewCanvasUnit) {
@@ -93,12 +93,12 @@ struct NewCanvasSheet: View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(spacing: 14) {
                 HStack {
-                    Text("New canvas").font(.title2.weight(.semibold))
+                    Text(L("New canvas")).font(.title2.weight(.semibold))
                     Spacer()
                     // Preset sizes, tucked into a More button; the size in use is checked.
                     Menu {
-                        Picker("Size", selection: preset) {
-                            Text("Custom").tag(CanvasPreset?.none)
+                        Picker(L("Size"), selection: preset) {
+                            Text(L("Custom")).tag(CanvasPreset?.none)
                             ForEach(CanvasPreset.groups.indices, id: \.self) { group in
                                 Divider()
                                 ForEach(CanvasPreset.groups[group]) { Text($0.title).tag(CanvasPreset?.some($0)) }
@@ -117,23 +117,23 @@ struct NewCanvasSheet: View {
                             .padding(.trailing, -10)
                     }
                     .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-                    .help("Preset sizes for screens and common formats")
-                    .accessibilityLabel("Preset sizes")
+                    .help(L("Preset sizes for screens and common formats"))
+                    .accessibilityLabel(L("Preset sizes"))
                 }
             }
             HStack(spacing: 16) {
-                dimension("Width", text: $width, field: .width)
+                dimension(L("Width"), text: $width, field: .width)
                 Image(systemName: "multiply").foregroundStyle(.tertiary).padding(.top, 20)
-                dimension("Height", text: $height, field: .height)
+                dimension(L("Height"), text: $height, field: .height)
             }
             // The settings are pills, each changed the same way: click to step to the next choice.
             HStack(spacing: 4) {
-                CyclePill(background.title, help: "Start see-through, or with a white or black Background layer. Click to switch.") {
+                CyclePill(background.title, help: L("Start see-through, or with a white or black Background layer. Click to switch.")) {
                     background = background.next
                 }
                 .accessibilityIdentifier("canvasBackground")
                 Text("·")
-                CyclePill(unit.name, help: "Units: pixels, inches, centimeters or millimeters. Click to switch.") {
+                CyclePill(unit.name, help: L("Units: pixels, inches, centimeters or millimeters. Click to switch.")) {
                     switchUnit(to: unit.next)
                 }
                 .accessibilityIdentifier("canvasUnit")
@@ -147,15 +147,15 @@ struct NewCanvasSheet: View {
             }
             .font(.callout).foregroundStyle(.secondary)
             if !valid {
-                Text(unit == .pixels ? "Enter whole numbers from 1 to \(DocumentLimits.maxSide.formatted()) pixels."
-                                     : "Enter a size up to \(DocumentLimits.maxSide.formatted()) pixels at this DPI.")
+                Text(unit == .pixels ? "请输入 1 至 \(DocumentLimits.maxSide.formatted()) 像素的整数。"
+                                     : "请输入此 DPI 下不超过 \(DocumentLimits.maxSide.formatted()) 像素的尺寸。")
                     .font(.callout).foregroundStyle(.orange)
             }
             HStack(spacing: 10) {
-                Button("Open project") { onOpen?() }.buttonStyle(.bordered)
-                Button("Import image") { session.showsImporter = true }.buttonStyle(.bordered)
+                Button(L("Open project")) { onOpen?() }.buttonStyle(.bordered)
+                Button(L("Import image")) { session.showsImporter = true }.buttonStyle(.bordered)
                 Spacer()
-                Button("Create canvas") {
+                Button(L("Create canvas")) {
                     guard let w = pixelWidth, let h = pixelHeight else { return }
                     if let onCreate { onCreate(w, h, resolution, background.color) }
                     else { session.createDocument(width: w, height: h, emptyLayer: true, resolution: resolution, background: background.color) }
@@ -206,8 +206,8 @@ struct NewCanvasSheet: View {
             HStack {
                 TextField(title, text: text).textFieldStyle(.plain)
                     .focused($focusedField, equals: field)
-                    .accessibilityIdentifier(title.lowercased() + "Input")
-                Text(unit.rawValue).foregroundStyle(.secondary)
+                    .accessibilityIdentifier(field == .width ? "widthInput" : "heightInput")
+                Text(unit.rawValue.localized).foregroundStyle(.secondary)
             }
             .padding(12).background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 7))
         }
@@ -255,10 +255,10 @@ struct CanvasPreset: Identifiable, Hashable {
             CanvasPreset(title: "Studio Display", width: 5120, height: 2880),
         ],
         [
-            CanvasPreset(title: "Instagram Square", width: 1080, height: 1080),
-            CanvasPreset(title: "Instagram Portrait", width: 1080, height: 1350),
-            CanvasPreset(title: "Instagram Story", width: 1080, height: 1920),
-            CanvasPreset(title: "YouTube Thumb", width: 1080, height: 608),
+            CanvasPreset(title: L("Instagram Square"), width: 1080, height: 1080),
+            CanvasPreset(title: L("Instagram Portrait"), width: 1080, height: 1350),
+            CanvasPreset(title: L("Instagram Story"), width: 1080, height: 1920),
+            CanvasPreset(title: L("YouTube Thumb"), width: 1080, height: 608),
         ],
     ]
     static let all = groups.flatMap { $0 }

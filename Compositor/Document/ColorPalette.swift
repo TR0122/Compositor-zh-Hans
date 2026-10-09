@@ -268,13 +268,13 @@ enum ColorPickerTarget: Equatable {
     case dialog(title: String)
     var title: String {
         switch self {
-        case .text: return "Color Picker (Text Color)"
-        case .effect(let kind): return "Color Picker (\(kind.rawValue) Color)"
-        case .palette(let background): return background ? "Color Picker (Background Color)" : "Color Picker (Foreground Color)"
-        case .gradientMap(let highlights): return highlights ? "Color Picker (Gradient Map Highlights)" : "Color Picker (Gradient Map Shadows)"
-        case .vignette: return "Color Picker (Vignette Color)"
-        case .dither(let light): return light ? "Color Picker (Dither Light Color)" : "Color Picker (Dither Dark Color)"
-        case .dialog(let title): return "Color Picker (\(title))"
+        case .text: return L("Color Picker (Text Color)")
+        case .effect(let kind): return "拾色器（\(kind.rawValue.localized)颜色）"
+        case .palette(let background): return background ? L("Color Picker (Background Color)") : L("Color Picker (Foreground Color)")
+        case .gradientMap(let highlights): return highlights ? L("Color Picker (Gradient Map Highlights)") : L("Color Picker (Gradient Map Shadows)")
+        case .vignette: return L("Color Picker (Vignette Color)")
+        case .dither(let light): return light ? L("Color Picker (Dither Light Color)") : L("Color Picker (Dither Dark Color)")
+        case .dialog(let title): return "拾色器（\(title)）"
         }
     }
 }

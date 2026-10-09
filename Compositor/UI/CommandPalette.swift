@@ -176,10 +176,10 @@ extension CommandPaletteEntry {
         let canAdd = session.canEditMask && session.activeLayer?.mask == nil
         let selected = session.selection != nil
         return [
-            CommandPaletteEntry(id: selected ? "Layer › Add Layer Mask from Selection" : "Layer › Add Layer Mask",
+            CommandPaletteEntry(id: selected ? L("Layer › Add Layer Mask from Selection") : L("Layer › Add Layer Mask"),
                                 shortcut: nil, isEnabled: canAdd,
                                 perform: { [weak session] in session?.addMask(revealing: true) }),
-            CommandPaletteEntry(id: selected ? "Layer › Add Layer Mask Hiding Selection" : "Layer › Add Layer Mask (Hide All)",
+            CommandPaletteEntry(id: selected ? L("Layer › Add Layer Mask Hiding Selection") : L("Layer › Add Layer Mask (Hide All)"),
                                 shortcut: nil, isEnabled: canAdd,
                                 perform: { [weak session] in session?.addMask(revealing: false) }),
         ]
@@ -191,32 +191,32 @@ extension CommandPaletteEntry {
     static func tools(for session: EditorSession) -> [CommandPaletteEntry] {
         typealias Setup = (EditorSession) -> Void
         let tools: [(String, String, NavigationTool, Setup?)] = [
-            ("Move / Transform", "V", .move, nil),
-            ("Rectangular Marquee", "M", .marquee, { $0.marqueeKind = .rectangle }),
-            ("Elliptical Marquee", "M", .marquee, { $0.marqueeKind = .ellipse }),
-            ("Lasso", "L", .lasso, { $0.lassoKind = .freehand }),
-            ("Polygonal Lasso", "L", .lasso, { $0.lassoKind = .polygonal }),
-            ("Magic Wand", "W", .wand, { $0.wandMode = .wand }),
-            ("Object Selection", "W", .wand, { $0.wandMode = .object }),
-            ("Crop", "C", .crop, nil),
-            ("Brush", "B", .brush, { $0.brushMode = .paint }),
-            ("Eraser", "E", .brush, { $0.brushMode = .erase }),
-            ("Spot Healing Brush", "J", .spotHealing, nil),
-            ("Clone Stamp", "S", .cloneStamp, nil),
-            ("Liquify", "R", .blur, { $0.blurMode = .liquify }),
-            ("Blur", "R", .blur, { $0.blurMode = .blur }),
-            ("Smudge", "R", .blur, { $0.blurMode = .smudge }),
-            ("Gradient", "G", .gradient, nil),
-            ("Rectangle", "U", .shape, { $0.shapeKind = .rectangle }),
-            ("Ellipse", "U", .shape, { $0.shapeKind = .ellipse }),
-            ("Line", "U", .shape, { $0.shapeKind = .line }),
-            ("Type", "T", .type, nil),
-            ("Eyedropper", "I", .eyedropper, nil),
-            ("Hand", "H", .hand, nil),
-            ("Zoom", "Z", .zoom, nil),
+            (L("Move / Transform"), "V", .move, nil),
+            (L("Rectangular Marquee"), "M", .marquee, { $0.marqueeKind = .rectangle }),
+            (L("Elliptical Marquee"), "M", .marquee, { $0.marqueeKind = .ellipse }),
+            (L("Lasso"), "L", .lasso, { $0.lassoKind = .freehand }),
+            (L("Polygonal Lasso"), "L", .lasso, { $0.lassoKind = .polygonal }),
+            (L("Magic Wand"), "W", .wand, { $0.wandMode = .wand }),
+            (L("Object Selection"), "W", .wand, { $0.wandMode = .object }),
+            (L("Crop"), "C", .crop, nil),
+            (L("Brush"), "B", .brush, { $0.brushMode = .paint }),
+            (L("Eraser"), "E", .brush, { $0.brushMode = .erase }),
+            (L("Spot Healing Brush"), "J", .spotHealing, nil),
+            (L("Clone Stamp"), "S", .cloneStamp, nil),
+            (L("Liquify"), "R", .blur, { $0.blurMode = .liquify }),
+            (L("Blur"), "R", .blur, { $0.blurMode = .blur }),
+            (L("Smudge"), "R", .blur, { $0.blurMode = .smudge }),
+            (L("Gradient"), "G", .gradient, nil),
+            (L("Rectangle"), "U", .shape, { $0.shapeKind = .rectangle }),
+            (L("Ellipse"), "U", .shape, { $0.shapeKind = .ellipse }),
+            (L("Line"), "U", .shape, { $0.shapeKind = .line }),
+            (L("Type"), "T", .type, nil),
+            (L("Eyedropper"), "I", .eyedropper, nil),
+            (L("Hand"), "H", .hand, nil),
+            (L("Zoom"), "Z", .zoom, nil),
         ]
         return tools.map { name, key, tool, setup in
-            CommandPaletteEntry(id: "Tool › \(name)", shortcut: key, isEnabled: session.document != nil,
+            CommandPaletteEntry(id: "工具 › \(name)", shortcut: key, isEnabled: session.document != nil,
                                 perform: { [weak session] in
                                     guard let session else { return }
                                     session.selectTool(tool)

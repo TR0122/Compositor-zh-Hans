@@ -42,7 +42,7 @@ struct ShortcutChord: Codable, Equatable, Hashable {
         return flags
     }
     var label: String {
-        let special = ["\u{7f}": "Delete", "\r": "Return", "\u{1b}": "Esc", "\t": "Tab", " ": "Space",
+        let special = ["\u{7f}": L("Delete"), "\r": L("Return"), "\u{1b}": L("Esc"), "\t": L("Tab"), " ": L("Space"),
                        "\u{f702}": "←", "\u{f703}": "→", "\u{f701}": "↓", "\u{f700}": "↑"]
         return (modifiers & 4 != 0 ? "⌃" : "") + (modifiers & 2 != 0 ? "⌥" : "")
             + (modifiers & 8 != 0 ? "⇧" : "") + (modifiers & 1 != 0 ? "⌘" : "")
@@ -65,64 +65,64 @@ struct ShortcutDefinition: Identifiable {
     let group: String
     let original: ShortcutChord
     var id: String { "\(group):\(title)" }
-    var isMenu: Bool { group == "Menus" }
+    var isMenu: Bool { group == L("Menus") }
 
     static let all: [ShortcutDefinition] = {
         func entry(_ title: String, _ key: String, _ modifiers: Int = 0, menu: Bool = false) -> ShortcutDefinition {
-            .init(title: title, group: menu ? "Menus" : "Canvas & Layers", original: ShortcutChord(key, modifiers))
+            .init(title: title, group: menu ? L("Menus") : L("Canvas & Layers"), original: ShortcutChord(key, modifiers))
         }
         var result: [ShortcutDefinition] = [
-            entry("Undo", "z", 1, menu: true), entry("Redo", "z", 9, menu: true),
-            entry("New Canvas", "n", 1, menu: true), entry("Open Project", "o", 1, menu: true),
-            entry("Save", "s", 1, menu: true), entry("Save As", "s", 9, menu: true),
-            entry("Export PNG", "e", 9, menu: true), entry("Export JPEG", "s", 11, menu: true),
-            entry("Close Project", "w", 1, menu: true), entry("Fit Canvas", "0", 1, menu: true), entry("Search Commands", "f", 1, menu: true),
-            entry("Actual Pixels", "1", 1, menu: true), entry("Zoom In", "=", 1, menu: true),
-            entry("Zoom Out", "-", 1, menu: true), entry("Show Transform Controls", "h", 1, menu: true),
-            entry("Hide Compositor", "h", 3, menu: true), entry("Cut", "x", 1, menu: true),
-            entry("Copy", "c", 1, menu: true), entry("Copy Merged", "c", 9, menu: true),
-            entry("Paste", "v", 1, menu: true), entry("Fill with Foreground", "\u{7f}", 2, menu: true),
-            entry("Fill with Background", "\u{7f}", 1, menu: true), entry("Content-Aware Fill", "\u{7f}", 8, menu: true),
-            entry("Select All", "a", 1, menu: true), entry("Deselect", "d", 1, menu: true),
-            entry("Inverse Selection", "i", 9, menu: true), entry("Select Subject", "a", 3, menu: true),
-            entry("Last Filter", "f", 5, menu: true), entry("Curves", "m", 1, menu: true), entry("Levels", "l", 1, menu: true),
-            entry("Hue/Saturation", "u", 1, menu: true), entry("Invert Pixels / Mask", "i", 1, menu: true),
-            entry("Canvas Size", "c", 3, menu: true), entry("Image Size", "i", 3, menu: true),
-            entry("Transform Layer / Selection", "t", 1, menu: true), entry("Duplicate / Layer via Copy", "j", 1, menu: true),
-            entry("Toggle Clipping Mask", "g", 3, menu: true), entry("Group Layers", "g", 1, menu: true),
-            entry("Ungroup Layers", "g", 9, menu: true),
-            entry("New Blank Layer", "n", 9, menu: true), entry("Move Layer Up", "]", 1, menu: true),
-            entry("Move Layer Down", "[", 1, menu: true), entry("Merge Layers", "e", 1, menu: true),
-            entry("Show Grid", "'", 1, menu: true), entry("Show Guides", ";", 1, menu: true),
-            entry("Show Rulers", "r", 1, menu: true), entry("Snap", ";", 9, menu: true),
-            entry("Lock Guides", ";", 3, menu: true)
+            entry(L("Undo"), "z", 1, menu: true), entry(L("Redo"), "z", 9, menu: true),
+            entry(L("New Canvas"), "n", 1, menu: true), entry(L("Open Project"), "o", 1, menu: true),
+            entry(L("Save"), "s", 1, menu: true), entry(L("Save As"), "s", 9, menu: true),
+            entry(L("Export PNG"), "e", 9, menu: true), entry(L("Export JPEG"), "s", 11, menu: true),
+            entry(L("Close Project"), "w", 1, menu: true), entry(L("Fit Canvas"), "0", 1, menu: true), entry(L("Search Commands"), "f", 1, menu: true),
+            entry(L("Actual Pixels"), "1", 1, menu: true), entry(L("Zoom In"), "=", 1, menu: true),
+            entry(L("Zoom Out"), "-", 1, menu: true), entry(L("Show Transform Controls"), "h", 1, menu: true),
+            entry(L("Hide Compositor"), "h", 3, menu: true), entry(L("Cut"), "x", 1, menu: true),
+            entry(L("Copy"), "c", 1, menu: true), entry(L("Copy Merged"), "c", 9, menu: true),
+            entry(L("Paste"), "v", 1, menu: true), entry(L("Fill with Foreground"), "\u{7f}", 2, menu: true),
+            entry(L("Fill with Background"), "\u{7f}", 1, menu: true), entry(L("Content-Aware Fill"), "\u{7f}", 8, menu: true),
+            entry(L("Select All"), "a", 1, menu: true), entry(L("Deselect"), "d", 1, menu: true),
+            entry(L("Inverse Selection"), "i", 9, menu: true), entry(L("Select Subject"), "a", 3, menu: true),
+            entry(L("Last Filter"), "f", 5, menu: true), entry(L("Curves"), "m", 1, menu: true), entry(L("Levels"), "l", 1, menu: true),
+            entry(L("Hue/Saturation"), "u", 1, menu: true), entry(L("Invert Pixels / Mask"), "i", 1, menu: true),
+            entry(L("Canvas Size"), "c", 3, menu: true), entry(L("Image Size"), "i", 3, menu: true),
+            entry(L("Transform Layer / Selection"), "t", 1, menu: true), entry(L("Duplicate / Layer via Copy"), "j", 1, menu: true),
+            entry(L("Toggle Clipping Mask"), "g", 3, menu: true), entry(L("Group Layers"), "g", 1, menu: true),
+            entry(L("Ungroup Layers"), "g", 9, menu: true),
+            entry(L("New Blank Layer"), "n", 9, menu: true), entry(L("Move Layer Up"), "]", 1, menu: true),
+            entry(L("Move Layer Down"), "[", 1, menu: true), entry(L("Merge Layers"), "e", 1, menu: true),
+            entry(L("Show Grid"), "'", 1, menu: true), entry(L("Show Guides"), ";", 1, menu: true),
+            entry(L("Show Rulers"), "r", 1, menu: true), entry(L("Snap"), ";", 9, menu: true),
+            entry(L("Lock Guides"), ";", 3, menu: true)
         ]
-        for (title, key) in [("Toggle Fullscreen: the canvas alone on black (Esc also leaves)", "f"), ("Select tool", "a"), ("Move / Transform tool", "v"), ("Hand tool", "h"),
-            ("Zoom tool", "z"), ("Brush tool", "b"), ("Eraser", "e"), ("Spot Healing", "j"),
-            ("Clone Stamp", "s"), ("Type tool", "t"), ("Gradient tool", "g"), ("Shape tool", "u"),
-            ("Eyedropper tool", "i"), ("Marquee / cycle shape", "m"), ("Magic", "w"),
-            ("Lasso / cycle mode", "l"), ("Blur / Smudge / Liquify", "r"), ("Crop tool", "c"),
-            ("Swap foreground/background", "x"), ("Reset colors", "d"), ("Cycle tool mode", "\t"),
-            ("Temporary Hand tool (hold)", " "), ("Delete selection / layer / effect / lasso point", "\u{7f}"),
-            ("Apply current canvas operation", "\r"), ("Cancel current canvas operation", "\u{1b}"),
-            ("Decrease brush size", "["), ("Increase brush size", "]")] {
+        for (title, key) in [(L("Toggle Fullscreen: the canvas alone on black (Esc also leaves)"), "f"), (L("Select tool"), "a"), (L("Move / Transform tool"), "v"), (L("Hand tool"), "h"),
+            (L("Zoom tool"), "z"), (L("Brush tool"), "b"), (L("Eraser"), "e"), (L("Spot Healing"), "j"),
+            (L("Clone Stamp"), "s"), (L("Type tool"), "t"), (L("Gradient tool"), "g"), (L("Shape tool"), "u"),
+            (L("Eyedropper tool"), "i"), (L("Marquee / cycle shape"), "m"), (L("Magic"), "w"),
+            (L("Lasso / cycle mode"), "l"), (L("Blur / Smudge / Liquify"), "r"), (L("Crop tool"), "c"),
+            (L("Swap foreground/background"), "x"), (L("Reset colors"), "d"), (L("Cycle tool mode"), "\t"),
+            (L("Temporary Hand tool (hold)"), " "), (L("Delete selection / layer / effect / lasso point"), "\u{7f}"),
+            (L("Apply current canvas operation"), "\r"), (L("Cancel current canvas operation"), "\u{1b}"),
+            (L("Decrease brush size"), "["), (L("Increase brush size"), "]")] {
             result.append(entry(title, key))
         }
-        result += [entry("Decrease brush hardness", "[", 8), entry("Increase brush hardness", "]", 8),
-                   entry("Previous blend mode", "-", 8), entry("Next blend mode", "=", 8),
-                   entry("Cycle shape kind", "u", 8)]
-        for digit in 0...9 { result.append(entry("Opacity digit \(digit) (type two for exact %)", String(digit))) }
-        for (direction, key) in [("Left", "\u{f702}"), ("Right", "\u{f703}"), ("Up", "\u{f700}"), ("Down", "\u{f701}")] {
-            result += [entry("Nudge \(direction) 1 px", key), entry("Nudge \(direction) 10 px", key, 8),
-                       entry("Move selected pixels \(direction) 1 px", key, 1), entry("Move selected pixels \(direction) 10 px", key, 9)]
+        result += [entry(L("Decrease brush hardness"), "[", 8), entry(L("Increase brush hardness"), "]", 8),
+                   entry(L("Previous blend mode"), "-", 8), entry(L("Next blend mode"), "=", 8),
+                   entry(L("Cycle shape kind"), "u", 8)]
+        for digit in 0...9 { result.append(entry("不透明度数字 \(digit)（输入两位数字以精确设置百分比）", String(digit))) }
+        for (direction, key) in [(L("Left"), "\u{f702}"), (L("Right"), "\u{f703}"), (L("Up"), "\u{f700}"), (L("Down"), "\u{f701}")] {
+            result += [entry("向\(direction.localized)微移 1 像素", key), entry("向\(direction.localized)微移 10 像素", key, 8),
+                       entry("向\(direction.localized)移动所选像素 1 像素", key, 1), entry("向\(direction.localized)移动所选像素 10 像素", key, 9)]
         }
-        result.append(.init(title: "Finish editing text", group: "Text Editing", original: ShortcutChord("\r", 1)))
-        for (title, key) in [("Decrease tracking", "\u{f702}"), ("Increase tracking", "\u{f703}"),
-                             ("Decrease leading", "\u{f700}"), ("Increase leading", "\u{f701}")] {
-            result.append(.init(title: title, group: "Text Editing", original: ShortcutChord(key, 2)))
-            result.append(.init(title: title + " by 10", group: "Text Editing", original: ShortcutChord(key, 10)))
+        result.append(.init(title: L("Finish editing text"), group: L("Text Editing"), original: ShortcutChord("\r", 1)))
+        for (title, key) in [(L("Decrease tracking"), "\u{f702}"), (L("Increase tracking"), "\u{f703}"),
+                             (L("Decrease leading"), "\u{f700}"), (L("Increase leading"), "\u{f701}")] {
+            result.append(.init(title: title, group: L("Text Editing"), original: ShortcutChord(key, 2)))
+            result.append(.init(title: title + L(" by 10"), group: L("Text Editing"), original: ShortcutChord(key, 10)))
         }
-        result.append(entry("Toggle Levels preview", "p", 2))
+        result.append(entry(L("Toggle Levels preview"), "p", 2))
         return result
     }()
 }
@@ -154,7 +154,7 @@ final class ShortcutSettings {
         return chord(definition)
     }
     func show() {
-        panel.show(title: "Keyboard Shortcuts", content: KeyboardShortcutsSheet(settings: self))
+        panel.show(title: L("Keyboard Shortcuts"), content: KeyboardShortcutsSheet(settings: self))
     }
     func close() { panel.close() }
     func save(_ values: [String: ShortcutChord]) {
@@ -167,14 +167,14 @@ final class ShortcutSettings {
         var assigned: [ShortcutChord: String] = [:]
         for definition in ShortcutDefinition.all {
             let chord = values[definition.id] ?? definition.original
-            guard chord.key.count == 1, (0...15).contains(chord.modifiers) else { return "Choose a single key with optional modifiers." }
-            if definition.group == "Text Editing", chord.modifiers & 7 == 0 {
-                return "Text-editing shortcuts need Command, Option, or Control so they do not replace normal typing."
+            guard chord.key.count == 1, (0...15).contains(chord.modifiers) else { return L("Choose a single key with optional modifiers.") }
+            if definition.group == L("Text Editing"), chord.modifiers & 7 == 0 {
+                return L("Text-editing shortcuts need Command, Option, or Control so they do not replace normal typing.")
             }
             if [ShortcutChord("q", 1), ShortcutChord(",", 1), ShortcutChord("m", 3)].contains(chord) {
-                return "\(chord.label) is reserved by macOS."
+                return "\(chord.label) 已被 macOS 保留。"
             }
-            if let other = assigned[chord] { return "\(chord.label) is assigned to both \(other) and \(definition.title)." }
+            if let other = assigned[chord] { return "\(chord.label) 同时分配给了“\(other)”和“\(definition.title)”。" }
             assigned[chord] = definition.title
         }
         return nil
@@ -185,10 +185,10 @@ final class ShortcutSettings {
     func canvasEvent(_ event: NSEvent) -> NSEvent? {
         guard !overrides.isEmpty else { return event }
         let input = ShortcutChord(event)
-        if let definition = ShortcutDefinition.all.first(where: { $0.group == "Canvas & Layers" && chord($0) == input }) {
+        if let definition = ShortcutDefinition.all.first(where: { $0.group == L("Canvas & Layers") && chord($0) == input }) {
             return definition.original == input ? event : definition.original.event(like: event)
         }
-        if ShortcutDefinition.all.contains(where: { $0.group != "Text Editing" && $0.original == input && chord($0) != input }) { return nil }
+        if ShortcutDefinition.all.contains(where: { $0.group != L("Text Editing") && $0.original == input && chord($0) != input }) { return nil }
         // Letter tool shortcuts traditionally also accept Shift. Follow the base
         // assignment unless Shift has its own explicit command (e.g. cycle shape).
         if input.modifiers == 8 {
@@ -203,7 +203,7 @@ final class ShortcutSettings {
 
     func textEvent(_ event: NSEvent) -> NSEvent? {
         guard !overrides.isEmpty else { return event }
-        let definitions = ShortcutDefinition.all.filter { $0.group == "Text Editing" || $0.original == ShortcutChord("\u{1b}") }
+        let definitions = ShortcutDefinition.all.filter { $0.group == L("Text Editing") || $0.original == ShortcutChord("\u{1b}") }
         let input = ShortcutChord(event)
         if let definition = definitions.first(where: { chord($0) == input }) {
             return definition.original == input ? event : definition.original.event(like: event)
@@ -234,12 +234,12 @@ private struct KeyboardShortcutsSheet: View {
     init(settings: ShortcutSettings) { self.settings = settings; _draft = State(initialValue: settings.overrides) }
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Click a shortcut, then press its new key combination. Changes apply when you save.")
+            Text(L("Click a shortcut, then press its new key combination. Changes apply when you save."))
                 .foregroundStyle(.secondary)
-            TextField("Search shortcuts", text: $search).textFieldStyle(.roundedBorder)
+            TextField(L("Search shortcuts"), text: $search).textFieldStyle(.roundedBorder)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 6) {
-                    ForEach(["Menus", "Canvas & Layers", "Text Editing"], id: \.self) { group in
+                    ForEach([L("Menus"), L("Canvas & Layers"), L("Text Editing")], id: \.self) { group in
                         Text(group).font(.headline).padding(.top, 8)
                         ForEach(ShortcutDefinition.all.filter { $0.group == group && (search.isEmpty || $0.title.localizedCaseInsensitiveContains(search)) }) { definition in
                             HStack {
@@ -257,9 +257,9 @@ private struct KeyboardShortcutsSheet: View {
                         }
                     }
                     Divider().padding(.vertical, 8)
-                    Text("Contextual keys & mouse gestures").font(.headline)
-                    Text("Text fields keep standard macOS editing keys. Dialogs share the Apply/Cancel assignments above. Numeric fields use Up/Down, with Shift for larger steps. Standard macOS commands include ⌘Q to quit and ⌃⌘F for full screen. The shortcut editor itself always uses Return to save and Esc to cancel when not recording.")
-                    Text("Option temporarily selects the eyedropper in painting tools. Shift constrains shapes/movement or adds to a selection; Option subtracts from selections or draws from center. Command-drag moves selected pixels; Command-Option-drag copies them. Option-drag duplicates layers/folders/effects; Option-click at a layer boundary toggles clipping. Command-click a thumbnail loads its selection. Control bypasses snapping. Right-drag adjusts brush size. Modifier-and-mouse gestures are fixed.")
+                    Text(L("Contextual keys & mouse gestures")).font(.headline)
+                    Text(L("Text fields keep standard macOS editing keys. Dialogs share the Apply/Cancel assignments above. Numeric fields use Up/Down, with Shift for larger steps. Standard macOS commands include ⌘Q to quit and ⌃⌘F for full screen. The shortcut editor itself always uses Return to save and Esc to cancel when not recording."))
+                    Text(L("Option temporarily selects the eyedropper in painting tools. Shift constrains shapes/movement or adds to a selection; Option subtracts from selections or draws from center. Command-drag moves selected pixels; Command-Option-drag copies them. Option-drag duplicates layers/folders/effects; Option-click at a layer boundary toggles clipping. Command-click a thumbnail loads its selection. Control bypasses snapping. Right-drag adjusts brush size. Modifier-and-mouse gestures are fixed."))
                 }.padding(.trailing, 8)
             }.frame(height: 465)
             // Only a conflict takes room here; an empty line left a wide gap above the buttons.
@@ -270,10 +270,10 @@ private struct KeyboardShortcutsSheet: View {
             }
             Divider()
             HStack {
-                Button("Restore Defaults") { recording = nil; draft = [:] }
+                Button(L("Restore Defaults")) { recording = nil; draft = [:] }
                 Spacer()
-                Button("Cancel") { settings.close() }.keyboardShortcut(.cancelAction)
-                Button("Save") { settings.save(draft) }.keyboardShortcut(.defaultAction)
+                Button(L("Cancel")) { settings.close() }.keyboardShortcut(.cancelAction)
+                Button(L("Save")) { settings.save(draft) }.keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
                     .disabled(recording != nil || ShortcutSettings.problem(in: draft) != nil)
             }
@@ -289,8 +289,8 @@ private struct ShortcutRecorder: NSViewRepresentable {
     func makeNSView(context: Context) -> RecorderButton { RecorderButton() }
     func updateNSView(_ button: RecorderButton, context: Context) {
         button.start = start; button.finish = finish; button.recording = recording
-        button.title = recording ? "Press keys…" : chord.label
-        button.setAccessibilityLabel(recording ? "Press a shortcut" : chord.label)
+        button.title = recording ? L("Press keys…") : chord.label
+        button.setAccessibilityLabel(recording ? L("Press a shortcut") : chord.label)
         if recording, button.window?.firstResponder !== button { button.window?.makeFirstResponder(button) }
     }
     final class RecorderButton: NSButton {

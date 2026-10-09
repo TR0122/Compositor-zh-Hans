@@ -20,7 +20,7 @@ extension EditorSession {
         do {
             let raster = try await ImageExporter.shared.render(source)
             guard !Task.isCancelled, adjustmentEditingID == id, adjustmentOriginal == nil else { return }
-            let asset = ImportedImage(image: raster.image, thumbnail: try PixelAdjust.thumbnail(of: raster.image), name: "Adjustment input")
+            let asset = ImportedImage(image: raster.image, thumbnail: try PixelAdjust.thumbnail(of: raster.image), name: L("Adjustment input"))
             let layer = ImageLayer(asset: asset, origin: .zero)
             switch original.kind {
             case .invert: break
@@ -56,7 +56,7 @@ extension EditorSession {
                 filterEdit = try FilterEdit(kind: original.kind.filterKind ?? .curves, layer: layer, selection: nil, settings: settings)
             }
             adjustmentOriginal = original
-            beginEdit("Edit \(original.kind.rawValue) Adjustment")
+            beginEdit("编辑\(original.kind.rawValue.localized)调整")
         } catch {
             guard adjustmentEditingID == id else { return }
             adjustmentEditingID = nil
